@@ -1,0 +1,87 @@
+# ZeroClaw Configuration for Enterprise AI Workflow
+# Dựa trên cấu hình hiện tại của anh Kiệt, đã bổ sung các phần cần thiết
+
+api_key = "enc2:..."
+default_provider = "custom:http://10.10.10.115:8317"
+default_model = "gpt-5.4"
+default_temperature = 0.7
+provider_timeout_secs = 120
+
+[channels_config.slack]
+enabled = true
+app_token = "xapp-..."
+bot_token = "xoxb-..."
+allowed_users = ["U07VCNPMC6L"]
+# Bật tính năng tự động trả lời trong thread
+auto_reply_in_threads = true
+
+[autonomy]
+level = "supervised"
+workspace_only = true
+allowed_commands = ["git", "npm", "cargo", "ls", "cat", "grep", "find", "echo", "pwd", "wc", "head", "tail", "date", "python", "python3", "pip", "node"]
+
+[agent]
+compact_context = true
+max_tool_iterations = 10
+max_history_messages = 50
+# Tăng context tokens để AI có thể đọc nhiều file từ .agent/
+max_context_tokens = 128000
+parallel_tools = false
+tool_dispatcher = "auto"
+# Bật tính năng context aware tools
+context_aware_tools = true
+
+[skills]
+# Bật open skills để sử dụng Notion/Jira integration
+open_skills_enabled = true
+allow_scripts = true
+prompt_injection_mode = "full"
+
+# ─── MCP Servers Configuration ────────────────────────────────────────────────
+[mcp_servers.github]
+command = "python3"
+args = ["./mcp_servers/github_mcp.py"]
+env = { GITHUB_TOKEN = "${GITHUB_TOKEN}" }
+
+[mcp_servers.notion]
+command = "npx"
+args = ["-y", "@notionhq/notion-mcp-server"]
+env = { OPENAPI_MCP_HEADERS = '{"Authorization": "Bearer ${NOTION_TOKEN}", "Notion-Version": "2022-06-28"}' }
+
+[mcp_servers.jira]
+command = "npx"
+args = ["-y", "@sooperset/mcp-atlassian"]
+env = { JIRA_URL = "${JIRA_URL}", JIRA_USERNAME = "${JIRA_USERNAME}", JIRA_API_TOKEN = "${JIRA_API_TOKEN}" }
+
+# ─── System Prompt ────────────────────────────────────────────────────────────
+[agent.system_prompt]
+content = """
+Bạn là một Senior Developer và DevOps Engineer. Bạn làm việc trong một môi trường đa dự án (Multi-Project) và giao tiếp với team qua Slack.
+
+## Quy trình Làm việc BẮT BUỘC:
+1. **Tiếp nhận Task**: Khi nhận được link Notion/Jira hoặc mô tả task, hãy dùng tools (Notion/Jira MCP) để đọc chi tiết.
+2. **Xác định Dự án**: Hỏi người dùng task này thuộc repository/dự án nào nếu chưa rõ.
+3. **Đọc Context Dự án**: BẮT BUỘC đọc các file trong thư mục `.agent/` (ARCHITECTURE.md, RULES.md) của dự án đó để hiểu pattern.
+4. **Hỏi Đáp (Clarification)**: 
+   - Đặt câu hỏi về UI: "Task này có thay đổi UI không? Có design figma không?"
+   - Đặt câu hỏi về Logic: "Nghiệp vụ cụ thể của phần này là gì? Có cần gọi API mới không?"
+   - Đợi người dùng trả lời trên Slack.
+5. **Lập Kế hoạch (Planning)**: 
+   - Sau khi đã rõ yêu cầu, tạo một bản kế hoạch theo format `plan.md`.
+   - Gửi bản kế hoạch này lên Slack và yêu cầu người dùng duyệt (bằng cách comment "approved").
+   - KHÔNG ĐƯỢC viết code khi chưa được duyệt.
+6. **Thực thi (Execution)**:
+   - Khi nhận được chữ "approved", sử dụng GitHub MCP để tạo branch mới từ `main` hoặc `develop`.
+   - Viết code tuân thủ NGHIÊM NGẶT các quy tắc trong `.agent/RULES.md` và `.agent/ARCHITECTURE.md`.
+   - Commit code và push lên GitHub.
+7. **Báo cáo (Reporting)**:
+   - Gửi tin nhắn lên Slack thông báo đã hoàn thành.
+   - Cung cấp link đến branch/PR trên GitHub.
+   - Tóm tắt ngắn gọn các file đã thay đổi.
+   - (Jenkins sẽ tự động lo phần build/deploy, bạn không cần can thiệp trừ khi được yêu cầu).
+
+## Phong cách Giao tiếp:
+- Chuyên nghiệp, ngắn gọn, đi thẳng vào vấn đề.
+- Sử dụng tiếng Việt.
+- Format tin nhắn Slack dễ nhìn (dùng bold, bullet points).
+"""
