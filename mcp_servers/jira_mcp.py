@@ -2,7 +2,7 @@
 Jira MCP Server for Enterprise AI Workflow
 
 Sử dụng opensource Jira MCP Server:
-  npx -y @sooperset/mcp-atlassian
+  uvx mcp-atlassian
 
 File này là wrapper/documentation hướng dẫn cách tích hợp Jira MCP.
 
@@ -22,10 +22,10 @@ Setup:
 
 Cấu hình trong config.yaml:
   [mcp_servers.jira]
-  command = "npx"
-  args = ["-y", "@sooperset/mcp-atlassian"]
+  command = "uvx"
+  args = ["mcp-atlassian"]
   env = {
-    JIRA_URL = "https://your-company.atlassian.net",
+    JIRA_URL = "https://blogicsystems.atlassian.net",
     JIRA_USERNAME = "your-email@company.com",
     JIRA_API_TOKEN = "your-api-token"
   }
@@ -40,8 +40,8 @@ Ví dụ URL Jira:
 """
 
 JIRA_MCP_CONFIG = {
-    "command": "npx",
-    "args": ["-y", "@sooperset/mcp-atlassian"],
+    "command": "uvx",
+    "args": ["mcp-atlassian"],
     "env": {
         "JIRA_URL": "${JIRA_URL}",
         "JIRA_USERNAME": "${JIRA_USERNAME}",
@@ -59,20 +59,20 @@ JIRA_SETUP_INSTRUCTIONS = """
    - Copy token
 
 2. Lấy thông tin Jira:
-   - Jira URL: https://your-company.atlassian.net
+   - Jira URL: https://blogicsystems.atlassian.net
    - Username: email đăng nhập Jira
 
 3. Cập nhật .env:
-   JIRA_URL=https://your-company.atlassian.net
+   JIRA_URL=https://blogicsystems.atlassian.net
    JIRA_USERNAME=your-email@company.com
    JIRA_API_TOKEN=your-api-token
 
 4. Cập nhật config.yaml của ZeroClaw:
    [mcp_servers.jira]
-   command = "npx"
-   args = ["-y", "@sooperset/mcp-atlassian"]
+   command = "uvx"
+   args = ["mcp-atlassian"]
    env = {
-     JIRA_URL = "https://your-company.atlassian.net",
+     JIRA_URL = "https://blogicsystems.atlassian.net",
      JIRA_USERNAME = "your-email@company.com",
      JIRA_API_TOKEN = "your-api-token"
    }

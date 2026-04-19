@@ -95,8 +95,8 @@ node --version
 # Test Notion MCP
 npx -y @notionhq/notion-mcp-server --help
 
-# Test Jira MCP
-npx -y @sooperset/mcp-atlassian --help
+# Test Jira MCP (cần cài đặt uv trước: pip install uv)
+uvx mcp-atlassian --help
 ```
 
 ---
@@ -119,7 +119,7 @@ GITHUB_TOKEN=ghp_...
 SLACK_APP_TOKEN=xapp-...
 SLACK_BOT_TOKEN=xoxb-...
 NOTION_TOKEN=secret_...
-JIRA_URL=https://your-company.atlassian.net
+JIRA_URL=https://blogicsystems.atlassian.net
 JIRA_USERNAME=your-email@company.com
 JIRA_API_TOKEN=...
 ```
@@ -160,9 +160,9 @@ args = ["-y", "@notionhq/notion-mcp-server"]
 env = { OPENAPI_MCP_HEADERS = '{"Authorization": "Bearer secret_...", "Notion-Version": "2022-06-28"}' }
 
 [mcp_servers.jira]
-command = "npx"
-args = ["-y", "@sooperset/mcp-atlassian"]
-env = { JIRA_URL = "https://your-company.atlassian.net", JIRA_USERNAME = "email@company.com", JIRA_API_TOKEN = "..." }
+command = "uvx"
+args = ["mcp-atlassian"]
+env = { JIRA_URL = "https://blogicsystems.atlassian.net", JIRA_USERNAME = "email@company.com", JIRA_API_TOKEN = "..." }
 ```
 
 ### 4.4. Thêm System Prompt
@@ -233,10 +233,10 @@ OPENAPI_MCP_HEADERS='{"Authorization": "Bearer secret_...", "Notion-Version": "2
 
 ```bash
 # Test đọc một Jira issue
-JIRA_URL=https://your-company.atlassian.net \
+JIRA_URL=https://blogicsystems.atlassian.net \
 JIRA_USERNAME=email@company.com \
 JIRA_API_TOKEN=... \
-  npx -y @sooperset/mcp-atlassian
+  uvx mcp-atlassian
 ```
 
 ### 6.4. Test End-to-End Workflow
